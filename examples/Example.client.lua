@@ -16,47 +16,52 @@
         └── StarterPlayerScripts
             └── Example.client.lua (LocalScript)
 
-    This example uses the current AddTab/AddSection API from NexusUI.lua.
+    This example is synchronized with the current NexusUI.lua API.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local NexusUI = require(ReplicatedStorage:WaitForChild("NexusUI"))
 
+-- CREATE WINDOW
+
 local Window = NexusUI.new({
     Name = "NEXUS UI",
     Subtitle = "Advanced Roblox Interface",
+    ToggleKey = Enum.KeyCode.RightControl,
     DisplayOrder = 50,
-    Theme = {
-        Accent = Color3.fromRGB(155, 91, 255),
-        Accent2 = Color3.fromRGB(190, 130, 255),
-    },
+})
+
+Window:SetTheme({
+    Accent = Color3.fromRGB(155, 91, 255),
+    AccentDark = Color3.fromRGB(105, 58, 190),
 })
 
 -- HOME TAB
 
-local Home = Window:AddTab({Name = "Home", Icon = "◆"})
-local Welcome = Window:AddSection(Home, {Name = "Welcome"})
+local Home = Window:Tab("Home", "◆")
+local Welcome = Home:Section("Welcome")
 
-Welcome:AddParagraph({
-    Text = "A modern, responsive Roblox UI library designed for desktop and Android devices. This example demonstrates the complete current component API.",
+Welcome:Paragraph({
+    Title = "Welcome to NEXUS",
+    Content = "A modern, responsive Roblox UI library designed for desktop and Android devices.",
 })
 
-Welcome:AddButton({
+Welcome:Button({
     Name = "Show Notification",
     Callback = function()
         Window:Notify({
             Title = "NEXUS UI",
             Content = "Your interface is working successfully!",
-            Color = Window.Theme.Success,
+            Type = "Success",
             Duration = 4,
         })
     end,
 })
 
-Welcome:AddDivider()
-Welcome:AddLabel("Library Version: 1.0.0")
+Welcome:Divider()
+Welcome:Label("Library Version: 1.0.0")
 
-Welcome:AddButton({
+Welcome:Button({
     Name = "Test Confirmation Dialog",
     Callback = function()
         Window:Dialog({
@@ -68,14 +73,14 @@ Welcome:AddButton({
                 Window:Notify({
                     Title = "Confirmed",
                     Content = "You pressed Continue.",
-                    Color = Window.Theme.Success,
+                    Type = "Success",
                 })
             end,
             OnCancel = function()
                 Window:Notify({
                     Title = "Cancelled",
                     Content = "You cancelled the action.",
-                    Color = Window.Theme.Warning,
+                    Type = "Warning",
                 })
             end,
         })
@@ -84,42 +89,40 @@ Welcome:AddButton({
 
 -- CONTROLS TAB
 
-local Controls = Window:AddTab({Name = "Controls", Icon = "⚙"})
-local Basic = Window:AddSection(Controls, {Name = "Basic Components"})
+local Controls = Window:Tab("Controls", "⚙")
+local Basic = Controls:Section("Basic Components")
 
-Basic:AddButton({
+Basic:Button({
     Name = "Click Me",
     Callback = function()
         print("NEXUS: Button clicked!")
         Window:Notify({
             Title = "Button",
             Content = "Button successfully clicked.",
-            Color = Window.Theme.Accent,
+            Type = "Info",
         })
     end,
 })
 
-local Enabled = Basic:AddToggle({
+local Enabled = Basic:Toggle({
     Name = "Enable Feature",
-    Flag = "EnableFeature",
     Default = false,
     Callback = function(value)
         print("Feature Enabled:", value)
     end,
 })
 
-Basic:AddButton({
+Basic:Button({
     Name = "Toggle Programmatically",
     Callback = function()
         Enabled:Set(not Enabled:Get())
     end,
 })
 
-Basic:AddDivider()
+Basic:Divider()
 
-local Slider = Basic:AddSlider({
+local Slider = Basic:Slider({
     Name = "Volume",
-    Flag = "Volume",
     Min = 0,
     Max = 100,
     Default = 50,
@@ -129,7 +132,7 @@ local Slider = Basic:AddSlider({
     end,
 })
 
-Basic:AddButton({
+Basic:Button({
     Name = "Set Volume to 75",
     Callback = function()
         Slider:Set(75)
@@ -138,12 +141,11 @@ Basic:AddButton({
 
 -- INPUT TAB
 
-local InputTab = Window:AddTab({Name = "Input", Icon = "⌨"})
-local InputSection = Window:AddSection(InputTab, {Name = "Text Input"})
+local InputTab = Window:Tab("Input", "⌨")
+local InputSection = InputTab:Section("Text Input")
 
-local PlayerName = InputSection:AddTextbox({
+local PlayerName = InputSection:Textbox({
     Name = "Player Name",
-    Flag = "PlayerName",
     Placeholder = "Enter your name...",
     Default = "",
     Callback = function(value, enterPressed)
@@ -152,82 +154,75 @@ local PlayerName = InputSection:AddTextbox({
     end,
 })
 
-InputSection:AddButton({
+InputSection:Button({
     Name = "Read Textbox",
     Callback = function()
         Window:Notify({
             Title = "Textbox Value",
             Content = "Current text: " .. PlayerName:Get(),
-            Color = Window.Theme.Accent,
+            Type = "Info",
         })
     end,
 })
 
 -- DROPDOWN TAB
 
-local DropdownTab = Window:AddTab({Name = "Dropdowns", Icon = "▾"})
-local DropSection = Window:AddSection(DropdownTab, {Name = "Selection Components"})
+local DropdownTab = Window:Tab("Dropdowns", "▾")
+local DropSection = DropdownTab:Section("Selection Components")
 
-local Dropdown = DropSection:AddDropdown({
+local Dropdown = DropSection:Dropdown({
     Name = "Choose a Mode",
-    Flag = "Mode",
-    Values = {"Easy", "Normal", "Hard", "Extreme"},
+    Options = {"Easy", "Normal", "Hard", "Extreme"},
     Default = "Normal",
     Callback = function(value)
         print("Selected Mode:", value)
     end,
 })
 
-DropSection:AddButton({
+DropSection:Button({
     Name = "Print Selected Mode",
     Callback = function()
         print("Current Mode:", Dropdown:Get())
     end,
 })
 
-local Multi = DropSection:AddDropdown({
+local Multi = DropSection:MultiDropdown({
     Name = "Choose Multiple Options",
-    Flag = "Options",
-    Values = {"Graphics", "Shadows", "Effects", "Particles", "Animations"},
-    Multi = true,
-    Default = {"Graphics", "Effects"},
+    Options = {"Graphics", "Shadows", "Effects", "Particles", "Animations"},
     Callback = function(values)
         print("Selected options:")
-        for value, selected in pairs(values) do
-            if selected then
-                print("-", value)
-            end
+        for _, value in ipairs(values) do
+            print("-", value)
         end
     end,
 })
 
-DropSection:AddButton({
+-- MultiDropdown supports Set() for initial or later selections.
+Multi:Set({"Graphics", "Effects"})
+
+DropSection:Button({
     Name = "Show Multi Selection",
     Callback = function()
-        local values = Multi:Get()
-        for value, selected in pairs(values) do
-            if selected then
-                print(value)
-            end
+        for _, value in ipairs(Multi:Get()) do
+            print(value)
         end
     end,
 })
 
 -- KEYBIND TAB
 
-local KeybindTab = Window:AddTab({Name = "Keybinds", Icon = "⌘"})
-local KeySection = Window:AddSection(KeybindTab, {Name = "Keyboard Controls"})
+local KeybindTab = Window:Tab("Keybinds", "⌘")
+local KeySection = KeybindTab:Section("Keyboard Controls")
 
-KeySection:AddKeybind({
+KeySection:Keybind({
     Name = "Action Key",
-    Flag = "ActionKey",
     Default = Enum.KeyCode.G,
     Callback = function(key)
         print("Pressed:", key.Name)
         Window:Notify({
             Title = "Keybind Activated",
             Content = "You pressed " .. key.Name,
-            Color = Window.Theme.Success,
+            Type = "Success",
         })
     end,
     Changed = function(key)
@@ -237,25 +232,22 @@ KeySection:AddKeybind({
 
 -- COLOR TAB
 
-local ColorTab = Window:AddTab({Name = "Appearance", Icon = "✦"})
-local ColorSection = Window:AddSection(ColorTab, {Name = "Color Customization"})
+local ColorTab = Window:Tab("Appearance", "✦")
+local ColorSection = ColorTab:Section("Color Customization")
 
-local AccentColor = ColorSection:AddColorpicker({
+local AccentColor = ColorSection:Colorpicker({
     Name = "Accent Color",
-    Flag = "AccentColor",
     Default = Color3.fromRGB(155, 91, 255),
     Callback = function(color)
-        print("New accent color:", color)
-        Window:Notify({
-            Title = "Accent Color",
-            Content = "The selected accent preset was applied to the control.",
-            Color = color,
-            Duration = 2,
+        Window:SetTheme({
+            Accent = color,
+            AccentDark = color:Lerp(Color3.new(0, 0, 0), 0.35),
         })
+        print("New accent color:", color)
     end,
 })
 
-ColorSection:AddButton({
+ColorSection:Button({
     Name = "Reset Accent",
     Callback = function()
         AccentColor:Set(Color3.fromRGB(155, 91, 255))
@@ -264,35 +256,32 @@ ColorSection:AddButton({
 
 -- INFORMATION TAB
 
-local InfoTab = Window:AddTab({Name = "Information", Icon = "ⓘ"})
-local InfoSection = Window:AddSection(InfoTab, {Name = "About"})
+local InfoTab = Window:Tab("Information", "ⓘ")
+local InfoSection = InfoTab:Section("About")
 
-InfoSection:AddParagraph({
-    Text = "NEXUS UI is a customizable Roblox Luau interface library with responsive layouts, interactive controls, notifications, and mobile support.",
+InfoSection:Paragraph({
+    Title = "NEXUS UI",
+    Content = "NEXUS is a customizable Roblox Luau interface library with responsive layouts, interactive controls, notifications, theme customization, and mobile support.",
 })
-InfoSection:AddLabel("Platform: Roblox")
-InfoSection:AddLabel("Language: Luau")
-InfoSection:AddLabel("Version: 1.0.0")
-InfoSection:AddDivider()
 
-InfoSection:AddButton({
+InfoSection:Label("Platform: Roblox")
+InfoSection:Label("Language: Luau")
+InfoSection:Label("Version: 1.0.0")
+InfoSection:Divider()
+
+InfoSection:Button({
     Name = "Destroy Interface",
     Callback = function()
         Window:Destroy()
     end,
 })
 
--- CONFIGURATION DEMO
-
--- SaveConfig returns plain Luau data. For permanent persistence, send validated
--- values to a server and save them from a server Script/DataStore system.
-local savedConfig = Window:SaveConfig()
-Window:LoadConfig(savedConfig)
+-- INITIAL NOTIFICATION
 
 Window:Notify({
     Title = "NEXUS UI Loaded",
     Content = "All example tabs have been initialized.",
-    Color = Window.Theme.Success,
+    Type = "Success",
     Duration = 5,
 })
 

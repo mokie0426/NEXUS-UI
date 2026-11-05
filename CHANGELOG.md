@@ -1,13 +1,18 @@
 # Changelog
 
+## 1.2.0 — 2026-11-05
+
+- Synchronized `examples/Example.client.lua` with the current user-maintained `src/NexusUI.lua` implementation.
+- Updated the example to use `Window:Tab()`, `Tab:Section()`, and section control methods such as `Button()`, `Toggle()`, `Slider()`, and `MultiDropdown()`.
+- Added demonstrations for `ToggleKey`, typed notifications, confirmation dialogs, `SetTheme()`, programmatic control updates, and mobile-oriented behavior.
+- Added the GitHub repository URL and raw ModuleScript source URL to the example and README.
+- Expanded the README with the actual constructor options, shorthand API, supported control options, theme tokens, dropdown behavior, and server-authoritative persistence guidance.
+- Confirmed that `src/NexusUI.lua` was preserved from the user’s remote update.
+
 ## 1.1.0 — 2026-11-05
 
-- Replaced the short example with a complete multi-tab demonstration based on the supplied example content.
-- Adapted legacy shorthand calls such as `Window:Tab()` and `Section:Button()` to the current `AddTab`, `AddSection`, and `Add*` API used by `src/NexusUI.lua`.
-- Added examples for notifications, confirmation dialogs, toggles, sliders, textboxes, single-select dropdowns, multi-select dropdowns, keybinds, color controls, programmatic state changes, and configuration round-tripping.
-- Added the GitHub repository URL and raw ModuleScript source URL to the example header and README.
-- Expanded installation instructions, API tables, state flags, theme documentation, persistence guidance, and compatibility notes.
-- Confirmed that `src/NexusUI.lua` was not modified by this documentation/example update.
+- Expanded the repository example and documentation with a complete multi-tab UI demonstration.
+- Added guidance for notifications, dialogs, input controls, selection controls, keybinds, color controls, themes, and safe Roblox Studio installation.
 
 ## 1.0.0 — 2026-11-05
 
@@ -15,5 +20,5 @@
 - Added responsive draggable window and mobile restore button.
 - Added tabs, collapsible sections, notifications, and confirmation dialogs.
 - Added button, label, paragraph, divider, toggle, slider, dropdown, textbox, keybind, and colorpicker controls.
-- Added theme overrides and state serialization helpers.
+- Added theme overrides and cleanup support.
 - Added Studio-safe example and security guidance.
