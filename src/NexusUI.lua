@@ -443,6 +443,13 @@ function NexusUI:AddSection(tab: any, options: Options): any
     return section
 end
 
+function NexusUI:_register(options: Options, api: any)
+    local key = options.Flag or options.Name
+    if key and key ~= "" then
+        self.Elements[key] = api
+    end
+end
+
 local function baseRow(self: any, section: any, height: number?): Frame
     local row = create("Frame", {Size = UDim2.new(1, 0, 0, height or 42), BackgroundColor3 = self.Theme.SurfaceAlt, BorderSizePixel = 0}, section.Body)
     corner(row, 8)
@@ -489,6 +496,7 @@ function NexusUI:_addToggle(section: any, options: Options)
     function api:Get() return value end
     bindActivation(switch, function() value = not value; render(true) end)
     render(false)
+    self:_register(options, api)
     return api
 end
 
@@ -524,6 +532,7 @@ function NexusUI:_addSlider(section: any, options: Options)
     function api:Set(nextValue: number) value = math.clamp(nextValue, min, max); render(true) end
     function api:Get() return value end
     render(false)
+    self:_register(options, api)
     return api
 end
 
@@ -554,7 +563,16 @@ function NexusUI:_addDropdown(section: any, options: Options)
     bindActivation(hit, function() list.Visible = not list.Visible end)
     function api:Set(value: any) selected = {[value] = true}; update(); safeCallback(options.Callback, value) end
     function api:Get() if options.Multi then return selected end for value, isSelected in pairs(selected) do if isSelected then return value end end return nil end
+    if options.Default ~= nil then
+        if options.Multi and type(options.Default) == "table" then
+            selected = {}
+            for _, defaultValue in ipairs(options.Default) do selected[defaultValue] = true end
+        else
+            selected = {[options.Default] = true}
+        end
+    end
     update()
+    self:_register(options, api)
     return api
 end
 
@@ -567,6 +585,7 @@ function NexusUI:_addTextbox(section: any, options: Options)
     input.FocusLost:Connect(function(enterPressed) safeCallback(options.Callback, input.Text, enterPressed) end)
     function api:Set(text: string) input.Text = text end
     function api:Get() return input.Text end
+    self:_register(options, api)
     return api
 end
 
@@ -585,6 +604,7 @@ function NexusUI:_addKeybind(section: any, options: Options)
     end)
     function api:Set(nextKey: Enum.KeyCode) key = nextKey; api.Key = key; button.Text = key.Name end
     function api:Get() return key end
+    self:_register(options, api)
     return api
 end
 
@@ -602,6 +622,7 @@ function NexusUI:_addColorpicker(section: any, options: Options)
     bindActivation(swatch, function() index = index % #colors + 1; color = colors[index]; api.Color = color; swatch.BackgroundColor3 = color; safeCallback(options.Callback, color) end)
     function api:Set(nextColor: Color3) color = nextColor; api.Color = color; swatch.BackgroundColor3 = color; safeCallback(options.Callback, color) end
     function api:Get() return color end
+    self:_register(options, api)
     return api
 end
 
